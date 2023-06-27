@@ -679,6 +679,8 @@ public class JsonApiManager extends ClassicJsonApiManager {
 
         private int pageSize = -1;
 
+        private int offset = -1;
+
         protected JsonRequestParams(final HttpServletRequest request, final FessConfig fessConfig) {
             this.request = request;
             this.fessConfig = fessConfig;
@@ -809,6 +811,25 @@ public class JsonApiManager extends ClassicJsonApiManager {
         @Override
         public HighlightInfo getHighlightInfo() {
             return ComponentUtil.getViewHelper().createHighlightInfo();
+        }
+
+        @Override
+        public int getOffset() {
+            if (offset != -1) {
+                return offset;
+            }
+
+            final String value = request.getParameter("offset");
+            if (StringUtil.isBlank(value)) {
+                offset = 0;
+            } else {
+                try {
+                    offset = Integer.parseInt(value);
+                } catch (final NumberFormatException e) {
+                    offset = 0;
+                }
+            }
+            return offset;
         }
     }
 

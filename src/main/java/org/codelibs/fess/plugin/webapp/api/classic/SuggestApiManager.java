@@ -264,6 +264,11 @@ public class SuggestApiManager extends ClassicJsonApiManager {
         }
 
         @Override
+        public int getOffset() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public int getPageSize() {
             throw new UnsupportedOperationException();
         }
