@@ -22,12 +22,6 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +41,12 @@ import org.codelibs.fess.suggest.entity.SuggestItem;
 import org.codelibs.fess.suggest.request.suggest.SuggestRequestBuilder;
 import org.codelibs.fess.suggest.request.suggest.SuggestResponse;
 import org.codelibs.fess.util.ComponentUtil;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class SuggestApiManager extends ClassicJsonApiManager {
     private static final Logger logger = LogManager.getLogger(SuggestApiManager.class);
