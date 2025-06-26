@@ -42,8 +42,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,6 +53,8 @@ import org.codelibs.fess.exception.InvalidAccessTokenException;
 import org.codelibs.fess.util.ComponentUtil;
 import org.lastaflute.web.util.LaRequestUtil;
 import org.lastaflute.web.util.LaResponseUtil;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 public abstract class ClassicJsonApiManager extends BaseApiManager {
 
