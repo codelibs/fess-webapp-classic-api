@@ -15,10 +15,20 @@
  */
 package org.codelibs.fess.plugin.webapp.api.classic;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.codelibs.fess.api.WebApiManagerFactory;
+import org.codelibs.fess.entity.HighlightInfo;
+import org.codelibs.fess.entity.SearchRequestParams.SearchRequestType;
 import org.codelibs.fess.mylasta.direction.FessConfig;
 import org.codelibs.fess.util.ComponentUtil;
 import org.dbflute.utflute.lastaflute.LastaFluteTestCase;
+import org.dbflute.utflute.mocklet.MockletHttpServletRequestImpl;
+import org.dbflute.utflute.mocklet.MockletServletContextImpl;
 
 public class SuggestApiManagerTest extends LastaFluteTestCase {
 
@@ -54,4 +64,136 @@ public class SuggestApiManagerTest extends LastaFluteTestCase {
         SuggestApiManager suggestApiManager = getComponent("suggestApiManager");
         assertEquals("/suggest", suggestApiManager.getPathPrefix());
     }
+
+    public void test_RequestParameter_parse_basicParams() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("query", "test query");
+        request.setParameter("fields", "title,content");
+        request.setParameter("num", "15");
+        request.setParameter("tags", "tag1,tag2");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals("test query", params.getQuery());
+        assertEquals(2, params.getSuggestFields().length);
+        assertEquals("title", params.getSuggestFields()[0]);
+        assertEquals("content", params.getSuggestFields()[1]);
+        assertEquals(15, params.getNum());
+        assertEquals(2, params.getTags().length);
+        assertEquals("tag1", params.getTags()[0]);
+        assertEquals("tag2", params.getTags()[1]);
+    }
+
+    public void test_RequestParameter_parse_defaultValues() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertNull(params.getQuery());
+        assertEquals(0, params.getSuggestFields().length);
+        assertEquals(10, params.getNum()); // Default value
+        assertEquals(0, params.getTags().length);
+    }
+
+    public void test_RequestParameter_parse_emptyFields() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("fields", "");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals(0, params.getSuggestFields().length);
+    }
+
+    public void test_RequestParameter_parse_invalidNum() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("num", "invalid");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals(10, params.getNum()); // Should fall back to default
+    }
+
+    public void test_RequestParameter_parse_numericStringNum() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("num", "25");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals(25, params.getNum());
+    }
+
+    public void test_RequestParameter_getFields() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        Map<String, String[]> fields = params.getFields();
+        assertTrue(fields.isEmpty());
+    }
+
+    public void test_RequestParameter_getConditions() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        Map<String, String[]> conditions = params.getConditions();
+        assertTrue(conditions.isEmpty());
+    }
+
+    public void test_RequestParameter_getLanguages() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.addParameter("lang", "ja");
+        request.addParameter("lang", "en");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        String[] languages = params.getLanguages();
+        assertEquals(2, languages.length);
+        assertEquals("ja", languages[0]);
+        assertEquals("en", languages[1]);
+    }
+
+    public void test_RequestParameter_getType() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals(SearchRequestType.SUGGEST, params.getType());
+    }
+
+    // Note: getHighlightInfo test removed due to configuration dependency
+
+    public void test_RequestParameter_unsupportedOperations() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        try {
+            params.getGeoInfo();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+
+        try {
+            params.getFacetInfo();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+
+        try {
+            params.getSort();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+    }
+
 }
