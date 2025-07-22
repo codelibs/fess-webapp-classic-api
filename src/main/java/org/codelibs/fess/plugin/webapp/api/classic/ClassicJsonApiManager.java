@@ -40,12 +40,35 @@ import org.lastaflute.web.util.LaResponseUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Abstract base class for JSON API managers in the classic search API plugin.
+ * Provides JSON response formatting, JSONP support, error handling, and JSON escaping utilities.
+ * Extends BaseApiManager to handle JSON-formatted web API requests.
+ */
 public abstract class ClassicJsonApiManager extends BaseApiManager {
+
+    /**
+     * Default constructor for ClassicJsonApiManager.
+     */
+    public ClassicJsonApiManager() {
+        super();
+    }
 
     private static final Logger logger = LogManager.getLogger(ClassicJsonApiManager.class);
 
+    /**
+     * The MIME type for JSON responses.
+     */
     protected String mimeType = "application/json";
 
+    /**
+     * Writes a JSON response with the specified status, body, and exception.
+     * Handles error formatting and authentication exceptions appropriately.
+     *
+     * @param status the HTTP status code
+     * @param body the response body content
+     * @param t the exception that occurred, or null if no exception
+     */
     protected void writeJsonResponse(final int status, final String body, final Throwable t) {
         if (t == null) {
             writeJsonResponse(status, body, (String) null);
@@ -87,6 +110,13 @@ public abstract class ClassicJsonApiManager extends BaseApiManager {
         writeJsonResponse(status, body, message);
     }
 
+    /**
+     * Writes a JSON response with the specified status, body, and error message.
+     *
+     * @param status the HTTP status code
+     * @param body the response body content
+     * @param errMsg the error message to include in the response
+     */
     protected void writeJsonResponse(final int status, final String body, final String errMsg) {
         String content = null;
         if (status == 0) {
@@ -99,6 +129,13 @@ public abstract class ClassicJsonApiManager extends BaseApiManager {
         writeJsonResponse(status, content);
     }
 
+    /**
+     * Writes a JSON response with the specified status and body.
+     * Handles JSONP callback wrapping if enabled and callback parameter is provided.
+     *
+     * @param status the HTTP status code
+     * @param body the response body content
+     */
     protected void writeJsonResponse(final int status, final String body) {
         final String callback = LaRequestUtil.getOptionalRequest().map(req -> req.getParameter("callback")).orElse(null);
         final boolean isJsonp = ComponentUtil.getFessConfig().isApiJsonpEnabled() && StringUtil.isNotBlank(callback);
@@ -127,10 +164,24 @@ public abstract class ClassicJsonApiManager extends BaseApiManager {
 
     }
 
+    /**
+     * Escapes a JSONP callback name by removing potentially dangerous characters.
+     * Only allows alphanumeric characters, underscore, dollar sign, and dot.
+     *
+     * @param callbackName the callback name to escape
+     * @return the escaped callback name prefixed with /**\/
+     */
     protected String escapeCallbackName(final String callbackName) {
         return "/**/" + callbackName.replaceAll("[^0-9a-zA-Z_\\$\\.]", StringUtil.EMPTY);
     }
 
+    /**
+     * Escapes an object for safe inclusion in JSON output.
+     * Handles various data types including strings, arrays, lists, maps, numbers, booleans, and dates.
+     *
+     * @param obj the object to escape
+     * @return the JSON-escaped string representation of the object
+     */
     protected String escapeJson(final Object obj) {
         if (obj == null) {
             return "null";
@@ -186,6 +237,11 @@ public abstract class ClassicJsonApiManager extends BaseApiManager {
         return buf.toString();
     }
 
+    /**
+     * Sets the MIME type for responses.
+     *
+     * @param mimeType the MIME type to set
+     */
     public void setMimeType(final String mimeType) {
         this.mimeType = mimeType;
     }

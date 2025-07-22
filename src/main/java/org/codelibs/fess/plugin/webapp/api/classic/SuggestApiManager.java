@@ -48,13 +48,25 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Suggest API manager that handles search suggestions at the /suggest path prefix.
+ * Uses Fess suggest functionality to provide search term suggestions based on user input.
+ * Extends ClassicJsonApiManager to provide JSON-formatted suggestion responses.
+ */
 public class SuggestApiManager extends ClassicJsonApiManager {
     private static final Logger logger = LogManager.getLogger(SuggestApiManager.class);
 
+    /**
+     * Constructs a SuggestApiManager with "/suggest" path prefix.
+     */
     public SuggestApiManager() {
         setPathPrefix("/suggest");
     }
 
+    /**
+     * Registers this API manager with the WebApiManagerFactory.
+     * Called after construction to make this manager available for request processing.
+     */
     @PostConstruct
     public void register() {
         if (logger.isInfoEnabled()) {
@@ -162,6 +174,10 @@ public class SuggestApiManager extends ClassicJsonApiManager {
         writeJsonResponse(status, buf.toString(), errMsg);
     }
 
+    /**
+     * Request parameter wrapper for suggest API requests.
+     * Extracts and validates parameters from HTTP requests for suggestion operations.
+     */
     protected static class RequestParameter extends SearchRequestParams {
         private final String query;
 
@@ -173,6 +189,15 @@ public class SuggestApiManager extends ClassicJsonApiManager {
 
         private final String[] tags;
 
+        /**
+         * Constructs RequestParameter from HTTP request parameters.
+         *
+         * @param request the HTTP servlet request
+         * @param query the search query for suggestions
+         * @param tags the tags to filter suggestions
+         * @param fields the fields to search for suggestions
+         * @param num the maximum number of suggestions to return
+         */
         protected RequestParameter(final HttpServletRequest request, final String query, final String[] tags, final String[] fields,
                 final int num) {
             this.query = query;
@@ -182,6 +207,12 @@ public class SuggestApiManager extends ClassicJsonApiManager {
             this.request = request;
         }
 
+        /**
+         * Parses HTTP request parameters into a RequestParameter object.
+         *
+         * @param request the HTTP servlet request
+         * @return the parsed RequestParameter
+         */
         protected static RequestParameter parse(final HttpServletRequest request) {
             final String query = request.getParameter("query");
             final String fieldsStr = request.getParameter("fields");
@@ -216,10 +247,20 @@ public class SuggestApiManager extends ClassicJsonApiManager {
             return query;
         }
 
+        /**
+         * Gets the fields to search for suggestions.
+         *
+         * @return the suggest fields array
+         */
         protected String[] getSuggestFields() {
             return fields;
         }
 
+        /**
+         * Gets the maximum number of suggestions to return.
+         *
+         * @return the maximum number of suggestions
+         */
         protected int getNum() {
             return num;
         }
@@ -234,6 +275,11 @@ public class SuggestApiManager extends ClassicJsonApiManager {
             return Collections.emptyMap();
         }
 
+        /**
+         * Gets the tags used to filter suggestions.
+         *
+         * @return the tags array
+         */
         public String[] getTags() {
             return tags;
         }

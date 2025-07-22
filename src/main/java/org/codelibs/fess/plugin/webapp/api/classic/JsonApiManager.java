@@ -60,14 +60,26 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * JSON API manager that handles search requests at the /json path prefix.
+ * Processes different request types including search, label, popular words, favorites, ping, and scroll.
+ * Extends ClassicJsonApiManager to provide JSON-formatted search API functionality.
+ */
 public class JsonApiManager extends ClassicJsonApiManager {
 
     private static final Logger logger = LogManager.getLogger(JsonApiManager.class);
 
+    /**
+     * Constructs a JsonApiManager with "/json" path prefix.
+     */
     public JsonApiManager() {
         setPathPrefix("/json");
     }
 
+    /**
+     * Registers this API manager with the WebApiManagerFactory.
+     * Called after construction to make this manager available for request processing.
+     */
     @PostConstruct
     public void register() {
         if (logger.isInfoEnabled()) {
@@ -125,6 +137,14 @@ public class JsonApiManager extends ClassicJsonApiManager {
         }
     }
 
+    /**
+     * Processes scroll search requests that return search results in NDJSON format.
+     * Allows streaming of large result sets without loading all results into memory.
+     *
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param chain the filter chain
+     */
     protected void processScrollSearchRequest(final HttpServletRequest request, final HttpServletResponse response,
             final FilterChain chain) {
         final SearchHelper searchHelper = ComponentUtil.getSearchHelper();
@@ -185,6 +205,13 @@ public class JsonApiManager extends ClassicJsonApiManager {
 
     }
 
+    /**
+     * Processes ping requests to check the health status of the search engine.
+     *
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param chain the filter chain
+     */
     protected void processPingRequest(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) {
         final SearchEngineClient searchEngineClient = ComponentUtil.getSearchEngineClient();
         int status;
@@ -203,6 +230,14 @@ public class JsonApiManager extends ClassicJsonApiManager {
         }
     }
 
+    /**
+     * Processes search requests and returns search results in JSON format.
+     * Handles query processing, result formatting, faceting, and related content.
+     *
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param chain the filter chain
+     */
     protected void processSearchRequest(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) {
         final SearchHelper searchHelper = ComponentUtil.getSearchHelper();
         final FessConfig fessConfig = ComponentUtil.getFessConfig();
@@ -381,6 +416,12 @@ public class JsonApiManager extends ClassicJsonApiManager {
 
     }
 
+    /**
+     * Creates a detailed error message from an exception, including nested causes.
+     *
+     * @param t the throwable to create a message for
+     * @return a detailed error message string
+     */
     protected String detailedMessage(final Throwable t) {
         if (t == null) {
             return "Unknown";
@@ -406,6 +447,13 @@ public class JsonApiManager extends ClassicJsonApiManager {
         return sb.toString();
     }
 
+    /**
+     * Processes label requests to retrieve available search labels.
+     *
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param chain the filter chain
+     */
     protected void processLabelRequest(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) {
         final LabelTypeHelper labelTypeHelper = ComponentUtil.getLabelTypeHelper();
 
@@ -447,6 +495,13 @@ public class JsonApiManager extends ClassicJsonApiManager {
 
     }
 
+    /**
+     * Processes popular word requests to retrieve popular search terms.
+     *
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param chain the filter chain
+     */
     protected void processPopularWordRequest(final HttpServletRequest request, final HttpServletResponse response,
             final FilterChain chain) {
         if (!ComponentUtil.getFessConfig().isWebApiPopularWord()) {
@@ -503,6 +558,13 @@ public class JsonApiManager extends ClassicJsonApiManager {
 
     }
 
+    /**
+     * Processes favorite requests to add documents to user favorites.
+     *
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param chain the filter chain
+     */
     protected void processFavoriteRequest(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) {
         if (!ComponentUtil.getFessConfig().isUserFavorite()) {
             writeJsonResponse(9, null, "Unsupported operation.");
@@ -589,6 +651,13 @@ public class JsonApiManager extends ClassicJsonApiManager {
 
     }
 
+    /**
+     * Processes favorites requests to retrieve user's favorite documents.
+     *
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param chain the filter chain
+     */
     protected void processFavoritesRequest(final HttpServletRequest request, final HttpServletResponse response, final FilterChain chain) {
         if (!ComponentUtil.getFessConfig().isUserFavorite()) {
             writeJsonResponse(9, null, "Unsupported operation.");
@@ -668,6 +737,10 @@ public class JsonApiManager extends ClassicJsonApiManager {
 
     }
 
+    /**
+     * Request parameter wrapper for JSON API requests.
+     * Extracts and validates parameters from HTTP requests for search operations.
+     */
     protected static class JsonRequestParams extends SearchRequestParams {
 
         private final HttpServletRequest request;
@@ -680,6 +753,12 @@ public class JsonApiManager extends ClassicJsonApiManager {
 
         private int offset = -1;
 
+        /**
+         * Constructs JsonRequestParams from HTTP request and Fess configuration.
+         *
+         * @param request the HTTP servlet request
+         * @param fessConfig the Fess configuration
+         */
         protected JsonRequestParams(final HttpServletRequest request, final FessConfig fessConfig) {
             this.request = request;
             this.fessConfig = fessConfig;
