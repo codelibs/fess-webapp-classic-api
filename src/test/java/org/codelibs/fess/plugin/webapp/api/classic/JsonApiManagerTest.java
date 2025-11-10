@@ -180,6 +180,204 @@ public class JsonApiManagerTest extends LastaFluteTestCase {
         assertTrue(result.contains("RuntimeException[Root cause]"));
     }
 
+    public void test_JsonRequestParams_fields() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("fields.title", "search term");
+        request.addParameter("fields.content", "value1");
+        request.addParameter("fields.content", "value2");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        java.util.Map<String, String[]> fields = params.getFields();
+        assertEquals(2, fields.size());
+        assertTrue(fields.containsKey("title"));
+        assertTrue(fields.containsKey("content"));
+        assertEquals("search term", fields.get("title")[0]);
+        assertEquals(2, fields.get("content").length);
+        assertEquals("value1", fields.get("content")[0]);
+        assertEquals("value2", fields.get("content")[1]);
+    }
+
+    public void test_JsonRequestParams_conditions() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("as.filetype", "pdf");
+        request.addParameter("as.mimetype", "application/pdf");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        java.util.Map<String, String[]> conditions = params.getConditions();
+        assertEquals(2, conditions.size());
+        assertTrue(conditions.containsKey("filetype"));
+        assertTrue(conditions.containsKey("mimetype"));
+        assertEquals("pdf", conditions.get("filetype")[0]);
+    }
+
+    public void test_JsonRequestParams_languages() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.addParameter("lang", "ja");
+        request.addParameter("lang", "en");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        String[] languages = params.getLanguages();
+        assertEquals(2, languages.length);
+        assertEquals("ja", languages[0]);
+        assertEquals("en", languages[1]);
+    }
+
+    public void test_JsonRequestParams_sort() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("sort", "score.desc");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals("score.desc", params.getSort());
+    }
+
+    public void test_JsonRequestParams_similarDocHash() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("sdh", "abc123");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals("abc123", params.getSimilarDocHash());
+    }
+
+    public void test_JsonRequestParams_offset() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("offset", "5");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals(5, params.getOffset());
+    }
+
+    public void test_JsonRequestParams_offset_default() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals(0, params.getOffset());
+    }
+
+    public void test_JsonRequestParams_offset_invalid() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("offset", "invalid");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals(0, params.getOffset());
+    }
+
+    public void test_JsonRequestParams_trackTotalHits() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("track_total_hits", "10000");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals("10000", params.getTrackTotalHits());
+    }
+
+    public void test_JsonRequestParams_getAttribute() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setAttribute("test_attribute", "test_value");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals("test_value", params.getAttribute("test_attribute"));
+    }
+
+    public void test_JsonRequestParams_pageSize_exceedsMax() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("num", "150"); // Exceeds max of 100
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals(100, params.getPageSize()); // Should be capped at max
+    }
+
+    public void test_JsonRequestParams_pageSize_zero() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("num", "0");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals(100, params.getPageSize()); // Should fall back to max
+    }
+
+    public void test_JsonRequestParams_pageSize_negative() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("num", "-10");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals(100, params.getPageSize()); // Should fall back to max
+    }
+
+    public void test_JsonRequestParams_startPosition_invalid() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setParameter("start", "invalid");
+
+        FessConfig fessConfig = ComponentUtil.getFessConfig();
+        JsonApiManager.JsonRequestParams params = new JsonApiManager.JsonRequestParams(request, fessConfig);
+
+        assertEquals(0, params.getStartPosition()); // Should fall back to default
+    }
+
+    public void test_matches() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
+        request.setServletPath("/json");
+
+        JsonApiManager manager = getComponent("jsonApiManager");
+        assertTrue(manager.matches(request));
+    }
+
+    public void test_matches_wrongPath() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/other");
+        request.setServletPath("/other");
+
+        JsonApiManager manager = getComponent("jsonApiManager");
+        assertFalse(manager.matches(request));
+    }
+
+    public void test_matches_jsonSubPath() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json/search");
+        request.setServletPath("/json/search");
+
+        JsonApiManager manager = getComponent("jsonApiManager");
+        assertTrue(manager.matches(request));
+    }
+
     // Test helper class to expose protected methods
     public static class TestableJsonApiManager extends JsonApiManager {
         public String testDetailedMessage(Throwable t) {

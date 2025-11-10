@@ -210,6 +210,76 @@ public class ClassicJsonApiManagerTest extends LastaFluteTestCase {
         assertEquals("application/xml", manager.getMimeType());
     }
 
+    public void test_escapeJson_listWithMixedTypes() {
+        List<Object> list = Arrays.asList("text", 42, true, null);
+        String result = manager.testEscapeJson(list);
+        assertEquals("[\"text\",42,true,null]", result);
+    }
+
+    public void test_escapeJson_mapWithNullValue() {
+        Map<String, String> map = new HashMap<>();
+        map.put("key1", "value1");
+        map.put("key2", null);
+        String result = manager.testEscapeJson(map);
+        assertTrue(result.contains("\"key1\":\"value1\""));
+        assertTrue(result.contains("\"key2\":null"));
+    }
+
+    public void test_escapeJson_stringWithBackslash() {
+        String result = manager.testEscapeJson("test\\path\\file");
+        assertEquals("\"test\\\\path\\\\file\"", result);
+    }
+
+    public void test_escapeJson_stringWithTab() {
+        String result = manager.testEscapeJson("test\ttab");
+        assertEquals("\"test\\ttab\"", result);
+    }
+
+    public void test_escapeJson_mixedIntegerTypes() {
+        List<Object> list = Arrays.asList(
+            Integer.valueOf(42),
+            Long.valueOf(123456789L),
+            Float.valueOf(3.14f),
+            Double.valueOf(2.71828)
+        );
+        String result = manager.testEscapeJson(list);
+        assertTrue(result.contains("42"));
+        assertTrue(result.contains("123456789"));
+        assertTrue(result.contains("3.14"));
+        assertTrue(result.contains("2.71828"));
+    }
+
+    public void test_escapeJson_complexNestedStructure() {
+        Map<String, Object> inner = new HashMap<>();
+        inner.put("nested_string", "value");
+        inner.put("nested_number", 100);
+
+        Map<String, Object> outer = new HashMap<>();
+        outer.put("inner_map", inner);
+        outer.put("simple_array", Arrays.asList(1, 2, 3));
+
+        String result = manager.testEscapeJson(outer);
+        assertTrue(result.contains("\"inner_map\":{"));
+        assertTrue(result.contains("\"nested_string\":\"value\""));
+        assertTrue(result.contains("\"nested_number\":100"));
+        assertTrue(result.contains("\"simple_array\":[1,2,3]"));
+    }
+
+    public void test_escapeJson_stringWithUnicodeCharacters() {
+        String result = manager.testEscapeJson("テスト文字列");
+        assertEquals("\"テスト文字列\"", result);
+    }
+
+    public void test_escapeCallbackName_withParentheses() {
+        String result = manager.testEscapeCallbackName("callback()");
+        assertEquals("/**/callback", result);
+    }
+
+    public void test_escapeCallbackName_withBrackets() {
+        String result = manager.testEscapeCallbackName("callback[0]");
+        assertEquals("/**/callback0", result);
+    }
+
     // Test implementation of abstract ClassicJsonApiManager for testing purposes
     private static class TestClassicJsonApiManager extends ClassicJsonApiManager {
         private String mimeType = "application/json";
