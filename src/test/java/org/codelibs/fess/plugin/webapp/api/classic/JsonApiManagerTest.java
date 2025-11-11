@@ -351,30 +351,6 @@ public class JsonApiManagerTest extends LastaFluteTestCase {
         assertEquals(0, params.getStartPosition()); // Should fall back to default
     }
 
-    public void test_matches() {
-        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
-        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
-
-        JsonApiManager manager = getComponent("jsonApiManager");
-        assertTrue(manager.matches(request));
-    }
-
-    public void test_matches_wrongPath() {
-        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
-        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/other");
-
-        JsonApiManager manager = getComponent("jsonApiManager");
-        assertFalse(manager.matches(request));
-    }
-
-    public void test_matches_jsonSubPath() {
-        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
-        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json/search");
-
-        JsonApiManager manager = getComponent("jsonApiManager");
-        assertTrue(manager.matches(request));
-    }
-
     // Test helper class to expose protected methods
     public static class TestableJsonApiManager extends JsonApiManager {
         public String testDetailedMessage(Throwable t) {

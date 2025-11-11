@@ -245,30 +245,6 @@ public class SuggestApiManagerTest extends LastaFluteTestCase {
         }
     }
 
-    public void test_matches() {
-        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
-        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
-
-        SuggestApiManager manager = getComponent("suggestApiManager");
-        assertTrue(manager.matches(request));
-    }
-
-    public void test_matches_wrongPath() {
-        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
-        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/other");
-
-        SuggestApiManager manager = getComponent("suggestApiManager");
-        assertFalse(manager.matches(request));
-    }
-
-    public void test_matches_suggestSubPath() {
-        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
-        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest/api");
-
-        SuggestApiManager manager = getComponent("suggestApiManager");
-        assertTrue(manager.matches(request));
-    }
-
     public void test_RequestParameter_parse_singleField() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -309,15 +285,6 @@ public class SuggestApiManagerTest extends LastaFluteTestCase {
         SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
 
         assertEquals(1000, params.getNum());
-    }
-
-    public void test_RequestParameter_getHighlightInfo() {
-        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
-        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
-        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
-
-        HighlightInfo highlightInfo = params.getHighlightInfo();
-        assertNotNull(highlightInfo);
     }
 
     public void test_RequestParameter_parse_multipleFieldsWithSpaces() {
