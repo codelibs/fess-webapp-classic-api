@@ -194,6 +194,128 @@ public class SuggestApiManagerTest extends LastaFluteTestCase {
         } catch (UnsupportedOperationException e) {
             // Expected
         }
+
+        try {
+            params.getStartPosition();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+
+        try {
+            params.getOffset();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+
+        try {
+            params.getPageSize();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+
+        try {
+            params.getExtraQueries();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+
+        try {
+            params.getAttribute("test");
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+
+        try {
+            params.getLocale();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+
+        try {
+            params.getSimilarDocHash();
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // Expected
+        }
+    }
+
+    public void test_RequestParameter_parse_singleField() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("fields", "title");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals(1, params.getSuggestFields().length);
+        assertEquals("title", params.getSuggestFields()[0]);
+    }
+
+    public void test_RequestParameter_parse_singleTag() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("tags", "tag1");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals(1, params.getTags().length);
+        assertEquals("tag1", params.getTags()[0]);
+    }
+
+    public void test_RequestParameter_parse_zeroNum() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("num", "0");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals(0, params.getNum());
+    }
+
+    public void test_RequestParameter_parse_largeNum() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("num", "1000");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals(1000, params.getNum());
+    }
+
+    public void test_RequestParameter_parse_multipleFieldsWithSpaces() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("fields", "field1, field2, field3");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        // Note: The split on comma may include spaces
+        assertTrue(params.getSuggestFields().length >= 3);
+    }
+
+    public void test_RequestParameter_parse_emptyTags() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        request.setParameter("tags", "");
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertEquals(0, params.getTags().length);
+    }
+
+    public void test_RequestParameter_parse_queryNull() {
+        MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
+        MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
+        // query parameter not set
+
+        SuggestApiManager.RequestParameter params = SuggestApiManager.RequestParameter.parse(request);
+
+        assertNull(params.getQuery());
     }
 
 }
