@@ -354,7 +354,6 @@ public class JsonApiManagerTest extends LastaFluteTestCase {
     public void test_matches() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
-        request.setServletPath("/json");
 
         JsonApiManager manager = getComponent("jsonApiManager");
         assertTrue(manager.matches(request));
@@ -363,7 +362,6 @@ public class JsonApiManagerTest extends LastaFluteTestCase {
     public void test_matches_wrongPath() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/other");
-        request.setServletPath("/other");
 
         JsonApiManager manager = getComponent("jsonApiManager");
         assertFalse(manager.matches(request));
@@ -372,7 +370,6 @@ public class JsonApiManagerTest extends LastaFluteTestCase {
     public void test_matches_jsonSubPath() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json/search");
-        request.setServletPath("/json/search");
 
         JsonApiManager manager = getComponent("jsonApiManager");
         assertTrue(manager.matches(request));
