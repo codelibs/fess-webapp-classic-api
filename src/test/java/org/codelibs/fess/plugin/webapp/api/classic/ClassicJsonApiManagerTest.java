@@ -236,12 +236,7 @@ public class ClassicJsonApiManagerTest extends LastaFluteTestCase {
     }
 
     public void test_escapeJson_mixedIntegerTypes() {
-        List<Object> list = Arrays.asList(
-            Integer.valueOf(42),
-            Long.valueOf(123456789L),
-            Float.valueOf(3.14f),
-            Double.valueOf(2.71828)
-        );
+        List<Object> list = Arrays.asList(Integer.valueOf(42), Long.valueOf(123456789L), Float.valueOf(3.14f), Double.valueOf(2.71828));
         String result = manager.testEscapeJson(list);
         assertTrue(result.contains("42"));
         assertTrue(result.contains("123456789"));
