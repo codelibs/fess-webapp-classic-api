@@ -4,12 +4,12 @@
 	<artifactId>fess-webapp-classic-api</artifactId>
 	<packaging>jar</packaging>
 	<name>Classic Search API Plugin</name>
-	<version>15.4.0-SNAPSHOT</version>
+	<version>15.4.0</version>
 	<scm>
 		<connection>scm:git:git@github.com:codelibs/fess-webapp-classic-api.git</connection>
 		<developerConnection>scm:git:git@github.com:codelibs/fess-webapp-classic-api.git</developerConnection>
 		<url>https://github.com/codelibs/fess-webapp-classic-api</url>
-	  <tag>HEAD</tag>
+	  <tag>fess-webapp-classic-api-15.4.0</tag>
   </scm>
 	<parent>
 		<groupId>org.codelibs.fess</groupId>
