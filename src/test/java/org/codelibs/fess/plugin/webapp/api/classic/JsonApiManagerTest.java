@@ -15,6 +15,8 @@
  */
 package org.codelibs.fess.plugin.webapp.api.classic;
 
+import org.junit.jupiter.api.TestInfo;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -25,11 +27,11 @@ import org.codelibs.fess.api.WebApiManagerFactory;
 import org.codelibs.fess.entity.SearchRequestParams.SearchRequestType;
 import org.codelibs.fess.mylasta.direction.FessConfig;
 import org.codelibs.fess.util.ComponentUtil;
-import org.dbflute.utflute.lastaflute.LastaFluteTestCase;
+import org.codelibs.fess.webapp.classic_api.UnitWebappTestCase;
 import org.dbflute.utflute.mocklet.MockletHttpServletRequestImpl;
 import org.dbflute.utflute.mocklet.MockletServletContextImpl;
 
-public class JsonApiManagerTest extends LastaFluteTestCase {
+public class JsonApiManagerTest extends UnitWebappTestCase {
 
     private WebApiManagerFactory webApiManagerFactory;
 
@@ -44,7 +46,7 @@ public class JsonApiManagerTest extends LastaFluteTestCase {
     }
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp(TestInfo testInfo) throws Exception {
         ComponentUtil.setFessConfig(new FessConfig.SimpleImpl() {
             private static final long serialVersionUID = 1L;
 
@@ -65,13 +67,13 @@ public class JsonApiManagerTest extends LastaFluteTestCase {
         });
         webApiManagerFactory = new WebApiManagerFactory();
         ComponentUtil.register(webApiManagerFactory, "webApiManagerFactory");
-        super.setUp();
+        super.setUp(testInfo);
     }
 
     @Override
-    public void tearDown() throws Exception {
+    public void tearDown(TestInfo testInfo) throws Exception {
         ComponentUtil.setFessConfig(null);
-        super.tearDown();
+        super.tearDown(testInfo);
     }
 
     public void test_pathPrefix() {
