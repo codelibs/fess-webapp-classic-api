@@ -15,6 +15,8 @@
  */
 package org.codelibs.fess.plugin.webapp.api.classic;
 
+import org.junit.jupiter.api.TestInfo;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -34,9 +36,9 @@ import org.codelibs.fess.Constants;
 import org.codelibs.fess.api.WebApiManagerFactory;
 import org.codelibs.fess.mylasta.direction.FessConfig;
 import org.codelibs.fess.util.ComponentUtil;
-import org.dbflute.utflute.lastaflute.LastaFluteTestCase;
+import org.codelibs.fess.webapp.classic_api.UnitWebappTestCase;
 
-public class ClassicJsonApiManagerTest extends LastaFluteTestCase {
+public class ClassicJsonApiManagerTest extends UnitWebappTestCase {
 
     private WebApiManagerFactory webApiManagerFactory;
 
@@ -53,7 +55,7 @@ public class ClassicJsonApiManagerTest extends LastaFluteTestCase {
     }
 
     @Override
-    public void setUp() throws Exception {
+    public void setUp(TestInfo testInfo) throws Exception {
         ComponentUtil.setFessConfig(new FessConfig.SimpleImpl() {
             private static final long serialVersionUID = 1L;
 
@@ -65,13 +67,13 @@ public class ClassicJsonApiManagerTest extends LastaFluteTestCase {
         webApiManagerFactory = new WebApiManagerFactory();
         ComponentUtil.register(webApiManagerFactory, "webApiManagerFactory");
         manager = new TestClassicJsonApiManager();
-        super.setUp();
+        super.setUp(testInfo);
     }
 
     @Override
-    public void tearDown() throws Exception {
+    public void tearDown(TestInfo testInfo) throws Exception {
         ComponentUtil.setFessConfig(null);
-        super.tearDown();
+        super.tearDown(testInfo);
     }
 
     public void test_escapeCallbackName_normal() {
