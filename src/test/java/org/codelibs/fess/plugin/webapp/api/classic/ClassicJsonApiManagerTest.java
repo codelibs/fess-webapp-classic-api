@@ -15,6 +15,7 @@
  */
 package org.codelibs.fess.plugin.webapp.api.classic;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
 import java.io.IOException;
@@ -76,76 +77,91 @@ public class ClassicJsonApiManagerTest extends UnitWebappTestCase {
         super.tearDown(testInfo);
     }
 
+    @Test
     public void test_escapeCallbackName_normal() {
         String result = manager.testEscapeCallbackName("myCallback123");
         assertEquals("/**/myCallback123", result);
     }
 
+    @Test
     public void test_escapeCallbackName_withSpecialChars() {
         String result = manager.testEscapeCallbackName("my<script>alert('xss')</script>Callback");
         assertEquals("/**/myscriptalertxssscriptCallback", result);
     }
 
+    @Test
     public void test_escapeCallbackName_allowedSpecialChars() {
         String result = manager.testEscapeCallbackName("my$Callback_123.test");
         assertEquals("/**/my$Callback_123.test", result);
     }
 
+    @Test
     public void test_escapeCallbackName_empty() {
         String result = manager.testEscapeCallbackName("");
         assertEquals("/**/", result);
     }
 
+    @Test
     public void test_escapeJson_null() {
         String result = manager.testEscapeJson(null);
         assertEquals("null", result);
     }
 
+    @Test
     public void test_escapeJson_string() {
         String result = manager.testEscapeJson("test string");
         assertEquals("\"test string\"", result);
     }
 
+    @Test
     public void test_escapeJson_stringWithQuotes() {
         String result = manager.testEscapeJson("test \"quoted\" string");
         assertEquals("\"test \\\"quoted\\\" string\"", result);
     }
 
+    @Test
     public void test_escapeJson_stringWithNewlines() {
         String result = manager.testEscapeJson("test\nstring\r\nwith\nnewlines");
         assertEquals("\"test\\nstring\\r\\nwith\\nnewlines\"", result);
     }
 
+    @Test
     public void test_escapeJson_integer() {
         String result = manager.testEscapeJson(42);
         assertEquals("42", result);
     }
 
+    @Test
     public void test_escapeJson_long() {
         String result = manager.testEscapeJson(123456789L);
         assertEquals("123456789", result);
     }
 
+    @Test
     public void test_escapeJson_float() {
         String result = manager.testEscapeJson(3.14f);
         assertEquals("3.14", result);
     }
 
+    @Test
     public void test_escapeJson_double() {
         String result = manager.testEscapeJson(2.71828);
         assertEquals("2.71828", result);
     }
 
+    @Test
     public void test_escapeJson_boolean_true() {
         String result = manager.testEscapeJson(true);
         assertEquals("true", result);
     }
 
+    @Test
     public void test_escapeJson_boolean_false() {
         String result = manager.testEscapeJson(false);
         assertEquals("false", result);
     }
 
+    @Test
     public void test_escapeJson_date() {
         Date date = new Date(1642780800000L); // 2022-01-21T12:00:00.000Z
         String result = manager.testEscapeJson(date);
@@ -154,30 +170,35 @@ public class ClassicJsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("\"" + expectedDate + "\"", result);
     }
 
+    @Test
     public void test_escapeJson_stringArray() {
         String[] array = { "test1", "test2", "test3" };
         String result = manager.testEscapeJson(array);
         assertEquals("[\"test1\",\"test2\",\"test3\"]", result);
     }
 
+    @Test
     public void test_escapeJson_emptyStringArray() {
         String[] array = {};
         String result = manager.testEscapeJson(array);
         assertEquals("[]", result);
     }
 
+    @Test
     public void test_escapeJson_list() {
         List<String> list = Arrays.asList("item1", "item2", "item3");
         String result = manager.testEscapeJson(list);
         assertEquals("[\"item1\",\"item2\",\"item3\"]", result);
     }
 
+    @Test
     public void test_escapeJson_emptyList() {
         List<String> list = Arrays.asList();
         String result = manager.testEscapeJson(list);
         assertEquals("[]", result);
     }
 
+    @Test
     public void test_escapeJson_map() {
         Map<String, String> map = new HashMap<>();
         map.put("key1", "value1");
@@ -189,12 +210,14 @@ public class ClassicJsonApiManagerTest extends UnitWebappTestCase {
         assertTrue(result.endsWith("}"));
     }
 
+    @Test
     public void test_escapeJson_emptyMap() {
         Map<String, String> map = new HashMap<>();
         String result = manager.testEscapeJson(map);
         assertEquals("{}", result);
     }
 
+    @Test
     public void test_escapeJson_nestedStructure() {
         Map<String, Object> map = new HashMap<>();
         map.put("string", "value");
@@ -206,18 +229,21 @@ public class ClassicJsonApiManagerTest extends UnitWebappTestCase {
         assertTrue(result.contains("\"array\":[\"item1\",\"item2\"]"));
     }
 
+    @Test
     public void test_setMimeType() {
         assertEquals("application/json", manager.getMimeType());
         manager.setMimeType("application/xml");
         assertEquals("application/xml", manager.getMimeType());
     }
 
+    @Test
     public void test_escapeJson_listWithMixedTypes() {
         List<Object> list = Arrays.asList("text", 42, true, null);
         String result = manager.testEscapeJson(list);
         assertEquals("[\"text\",42,true,null]", result);
     }
 
+    @Test
     public void test_escapeJson_mapWithNullValue() {
         Map<String, String> map = new HashMap<>();
         map.put("key1", "value1");
@@ -227,16 +253,19 @@ public class ClassicJsonApiManagerTest extends UnitWebappTestCase {
         assertTrue(result.contains("\"key2\":null"));
     }
 
+    @Test
     public void test_escapeJson_stringWithBackslash() {
         String result = manager.testEscapeJson("test\\path\\file");
         assertEquals("\"test\\\\path\\\\file\"", result);
     }
 
+    @Test
     public void test_escapeJson_stringWithTab() {
         String result = manager.testEscapeJson("test\ttab");
         assertEquals("\"test\\ttab\"", result);
     }
 
+    @Test
     public void test_escapeJson_mixedIntegerTypes() {
         List<Object> list = Arrays.asList(Integer.valueOf(42), Long.valueOf(123456789L), Float.valueOf(3.14f), Double.valueOf(2.71828));
         String result = manager.testEscapeJson(list);
@@ -246,6 +275,7 @@ public class ClassicJsonApiManagerTest extends UnitWebappTestCase {
         assertTrue(result.contains("2.71828"));
     }
 
+    @Test
     public void test_escapeJson_complexNestedStructure() {
         Map<String, Object> inner = new HashMap<>();
         inner.put("nested_string", "value");
@@ -262,6 +292,7 @@ public class ClassicJsonApiManagerTest extends UnitWebappTestCase {
         assertTrue(result.contains("\"simple_array\":[1,2,3]"));
     }
 
+    @Test
     public void test_escapeJson_stringWithUnicodeCharacters() {
         String result = manager.testEscapeJson("テスト文字列");
         // StringEscapeUtils may escape Unicode characters
@@ -270,11 +301,13 @@ public class ClassicJsonApiManagerTest extends UnitWebappTestCase {
         assertTrue(result.length() > 2); // Has content between quotes
     }
 
+    @Test
     public void test_escapeCallbackName_withParentheses() {
         String result = manager.testEscapeCallbackName("callback()");
         assertEquals("/**/callback", result);
     }
 
+    @Test
     public void test_escapeCallbackName_withBrackets() {
         String result = manager.testEscapeCallbackName("callback[0]");
         assertEquals("/**/callback0", result);

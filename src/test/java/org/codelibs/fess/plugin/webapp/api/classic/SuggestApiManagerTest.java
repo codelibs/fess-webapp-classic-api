@@ -15,6 +15,7 @@
  */
 package org.codelibs.fess.plugin.webapp.api.classic;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
 import java.util.Collections;
@@ -62,11 +63,13 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         super.tearDown(testInfo);
     }
 
+    @Test
     public void test_pathPrefix() {
         SuggestApiManager suggestApiManager = getComponent("suggestApiManager");
         assertEquals("/suggest", suggestApiManager.getPathPrefix());
     }
 
+    @Test
     public void test_RequestParameter_parse_basicParams() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -87,6 +90,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals("tag2", params.getTags()[1]);
     }
 
+    @Test
     public void test_RequestParameter_parse_defaultValues() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -99,6 +103,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals(0, params.getTags().length);
     }
 
+    @Test
     public void test_RequestParameter_parse_emptyFields() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -109,6 +114,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals(0, params.getSuggestFields().length);
     }
 
+    @Test
     public void test_RequestParameter_parse_invalidNum() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -119,6 +125,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals(10, params.getNum()); // Should fall back to default
     }
 
+    @Test
     public void test_RequestParameter_parse_numericStringNum() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -129,6 +136,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals(25, params.getNum());
     }
 
+    @Test
     public void test_RequestParameter_getFields() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -138,6 +146,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertTrue(fields.isEmpty());
     }
 
+    @Test
     public void test_RequestParameter_getConditions() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -147,6 +156,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertTrue(conditions.isEmpty());
     }
 
+    @Test
     public void test_RequestParameter_getLanguages() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -161,6 +171,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals("en", languages[1]);
     }
 
+    @Test
     public void test_RequestParameter_getType() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -171,6 +182,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
 
     // Note: getHighlightInfo test removed due to configuration dependency
 
+    @Test
     public void test_RequestParameter_unsupportedOperations() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -247,6 +259,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         }
     }
 
+    @Test
     public void test_RequestParameter_parse_singleField() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -258,6 +271,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals("title", params.getSuggestFields()[0]);
     }
 
+    @Test
     public void test_RequestParameter_parse_singleTag() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -269,6 +283,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals("tag1", params.getTags()[0]);
     }
 
+    @Test
     public void test_RequestParameter_parse_zeroNum() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -279,6 +294,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals(0, params.getNum());
     }
 
+    @Test
     public void test_RequestParameter_parse_largeNum() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -289,6 +305,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals(1000, params.getNum());
     }
 
+    @Test
     public void test_RequestParameter_parse_multipleFieldsWithSpaces() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -300,6 +317,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertTrue(params.getSuggestFields().length >= 3);
     }
 
+    @Test
     public void test_RequestParameter_parse_emptyTags() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");
@@ -310,6 +328,7 @@ public class SuggestApiManagerTest extends UnitWebappTestCase {
         assertEquals(0, params.getTags().length);
     }
 
+    @Test
     public void test_RequestParameter_parse_queryNull() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/suggest");

@@ -15,6 +15,7 @@
  */
 package org.codelibs.fess.plugin.webapp.api.classic;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
 import java.util.HashMap;
@@ -76,11 +77,13 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         super.tearDown(testInfo);
     }
 
+    @Test
     public void test_pathPrefix() {
         JsonApiManager jsonApiManager = getComponent("jsonApiManager");
         assertEquals("/json", jsonApiManager.getPathPrefix());
     }
 
+    @Test
     public void test_JsonRequestParams_construction() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -96,6 +99,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals(10, params.getStartPosition());
     }
 
+    @Test
     public void test_JsonRequestParams_defaultValues() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -107,6 +111,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertTrue(params.getStartPosition() >= 0);
     }
 
+    @Test
     public void test_JsonRequestParams_invalidPageSize() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -118,6 +123,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertTrue(params.getPageSize() > 0); // Should fall back to default
     }
 
+    @Test
     public void test_JsonRequestParams_extraQueries() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -133,6 +139,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("extra2", extraQueries[1]);
     }
 
+    @Test
     public void test_JsonRequestParams_type() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -142,6 +149,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals(SearchRequestType.JSON, params.getType());
     }
 
+    @Test
     public void test_JsonRequestParams_locale() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -151,12 +159,14 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals(Locale.ROOT, params.getLocale());
     }
 
+    @Test
     public void test_detailedMessage_nullException() {
         TestableJsonApiManager manager = new TestableJsonApiManager();
         String result = manager.testDetailedMessage(null);
         assertEquals("Unknown", result);
     }
 
+    @Test
     public void test_detailedMessage_simpleException() {
         TestableJsonApiManager manager = new TestableJsonApiManager();
         RuntimeException ex = new RuntimeException("Test error");
@@ -164,6 +174,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("RuntimeException[Test error]", result);
     }
 
+    @Test
     public void test_detailedMessage_exceptionWithoutMessage() {
         TestableJsonApiManager manager = new TestableJsonApiManager();
         RuntimeException ex = new RuntimeException();
@@ -172,6 +183,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("RuntimeException[null]", result);
     }
 
+    @Test
     public void test_detailedMessage_nestedException() {
         TestableJsonApiManager manager = new TestableJsonApiManager();
         RuntimeException cause = new RuntimeException("Root cause");
@@ -182,6 +194,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertTrue(result.contains("RuntimeException[Root cause]"));
     }
 
+    @Test
     public void test_JsonRequestParams_fields() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -202,6 +215,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("value2", fields.get("content")[1]);
     }
 
+    @Test
     public void test_JsonRequestParams_conditions() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -218,6 +232,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("pdf", conditions.get("filetype")[0]);
     }
 
+    @Test
     public void test_JsonRequestParams_languages() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -233,6 +248,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("en", languages[1]);
     }
 
+    @Test
     public void test_JsonRequestParams_sort() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -244,6 +260,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("score.desc", params.getSort());
     }
 
+    @Test
     public void test_JsonRequestParams_similarDocHash() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -255,6 +272,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("abc123", params.getSimilarDocHash());
     }
 
+    @Test
     public void test_JsonRequestParams_offset() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -266,6 +284,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals(5, params.getOffset());
     }
 
+    @Test
     public void test_JsonRequestParams_offset_default() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -276,6 +295,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals(0, params.getOffset());
     }
 
+    @Test
     public void test_JsonRequestParams_offset_invalid() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -287,6 +307,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals(0, params.getOffset());
     }
 
+    @Test
     public void test_JsonRequestParams_trackTotalHits() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -298,6 +319,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("10000", params.getTrackTotalHits());
     }
 
+    @Test
     public void test_JsonRequestParams_getAttribute() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -309,6 +331,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals("test_value", params.getAttribute("test_attribute"));
     }
 
+    @Test
     public void test_JsonRequestParams_pageSize_exceedsMax() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -320,6 +343,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals(100, params.getPageSize()); // Should be capped at max
     }
 
+    @Test
     public void test_JsonRequestParams_pageSize_zero() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -331,6 +355,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals(100, params.getPageSize()); // Should fall back to max
     }
 
+    @Test
     public void test_JsonRequestParams_pageSize_negative() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
@@ -342,6 +367,7 @@ public class JsonApiManagerTest extends UnitWebappTestCase {
         assertEquals(100, params.getPageSize()); // Should fall back to max
     }
 
+    @Test
     public void test_JsonRequestParams_startPosition_invalid() {
         MockletServletContextImpl servletContext = new MockletServletContextImpl("/fess");
         MockletHttpServletRequestImpl request = new MockletHttpServletRequestImpl(servletContext, "/json");
