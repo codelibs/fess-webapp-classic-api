@@ -38,7 +38,7 @@ import org.dbflute.utflute.mocklet.MockletHttpServletRequestImpl;
 import org.dbflute.utflute.mocklet.MockletServletContextImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.opensearch.action.update.UpdateRequestBuilder;
+import org.codelibs.fesen.opensearch.action.update.UpdateRequestBuilder;
 
 /**
  * Covers {@link JsonApiManager#processFavoriteRequest}'s branch on the three-valued
