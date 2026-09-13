@@ -30,6 +30,7 @@ import org.codelibs.core.exception.IORuntimeException;
 import org.codelibs.core.lang.StringUtil;
 import org.codelibs.fess.Constants;
 import org.codelibs.fess.app.service.FavoriteLogService;
+import org.codelibs.fess.app.service.FavoriteLogService.FavoriteResult;
 import org.codelibs.fess.entity.FacetInfo;
 import org.codelibs.fess.entity.GeoInfo;
 import org.codelibs.fess.entity.HighlightInfo;
@@ -611,26 +612,33 @@ public class JsonApiManager extends ClassicJsonApiManager {
                             throw new WebApiException(5, "Not found: " + favoriteUrl);
                         }
 
-                        if (!favoriteLogService.addUrl(userCode, (userInfo, favoriteLog) -> {
+                        final FavoriteResult result = favoriteLogService.addUrl(userCode, (userInfo, favoriteLog) -> {
                             favoriteLog.setUserInfoId(userInfo.getId());
                             favoriteLog.setUrl(favoriteUrl);
                             favoriteLog.setDocId(docId);
                             favoriteLog.setQueryId(queryId);
                             favoriteLog.setCreatedAt(systemHelper.getCurrentTimeAsLocalDateTime());
-                        })) {
+                        });
+                        if (result == FavoriteResult.NO_SUCH_USER) {
+                            // The outcome the old boolean reported as false: nothing was written.
                             throw new WebApiException(4, "Failed to add url: " + favoriteUrl);
                         }
 
-                        final String id = DocumentUtil.getValue(doc, fessConfig.getIndexFieldId(), String.class);
-                        searchHelper.update(id, builder -> {
-                            final Script script = ComponentUtil.getLanguageHelper()
-                                    .createScript(doc, "ctx._source." + fessConfig.getIndexFieldFavoriteCount() + "+=1");
-                            builder.setScript(script);
-                            final Map<String, Object> upsertMap = new HashMap<>();
-                            upsertMap.put(fessConfig.getIndexFieldFavoriteCount(), 1);
-                            builder.setUpsert(upsertMap);
-                            builder.setRefreshPolicy(Constants.TRUE);
-                        });
+                        // Re-adding a URL the user already marked is an idempotent success. The
+                        // count bump is skipped so that one user cannot raise favorite_count -- a
+                        // documented sort key -- by repeating the request.
+                        if (result == FavoriteResult.ADDED) {
+                            final String id = DocumentUtil.getValue(doc, fessConfig.getIndexFieldId(), String.class);
+                            searchHelper.update(id, builder -> {
+                                final Script script = ComponentUtil.getLanguageHelper()
+                                        .createScript(doc, "ctx._source." + fessConfig.getIndexFieldFavoriteCount() + "+=1");
+                                builder.setScript(script);
+                                final Map<String, Object> upsertMap = new HashMap<>();
+                                upsertMap.put(fessConfig.getIndexFieldFavoriteCount(), 1);
+                                builder.setUpsert(upsertMap);
+                                builder.setRefreshPolicy(Constants.TRUE);
+                            });
+                        }
 
                         writeJsonResponse(0, "\"result\":\"ok\"", (String) null);
 
