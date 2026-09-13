@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import org.codelibs.fesen.opensearch.action.update.UpdateRequestBuilder;
+import org.opensearch.action.update.UpdateRequestBuilder;
 import org.codelibs.fess.api.WebApiManagerFactory;
 import org.codelibs.fess.app.service.FavoriteLogService;
 import org.codelibs.fess.app.service.FavoriteLogService.FavoriteResult;
