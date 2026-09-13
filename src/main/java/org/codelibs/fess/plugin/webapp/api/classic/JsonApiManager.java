@@ -271,6 +271,8 @@ public class JsonApiManager extends ClassicJsonApiManager {
             final long endRecordNumber = data.getCurrentEndRecordNumber();
             final List<String> pageNumbers = data.getPageNumberList();
             final boolean partial = data.isPartialResults();
+            final boolean timedOut = data.isTimedOut();
+            final boolean shardFailed = data.isShardFailed();
             final String searchQuery = data.getSearchQuery();
             final long requestedTime = data.getRequestedTime();
 
@@ -311,6 +313,10 @@ public class JsonApiManager extends ClassicJsonApiManager {
             buf.append(escapeJson(pageNumbers));
             buf.append(",\"partial\":");
             buf.append(escapeJson(partial));
+            buf.append(",\"timed_out\":");
+            buf.append(escapeJson(timedOut));
+            buf.append(",\"shard_failed\":");
+            buf.append(escapeJson(shardFailed));
             buf.append(",\"search_query\":");
             buf.append(escapeJson(searchQuery));
             buf.append(",\"requested_time\":");
