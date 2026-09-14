@@ -53,7 +53,7 @@ import org.codelibs.fess.util.DocumentUtil;
 import org.codelibs.fess.util.FacetResponse;
 import org.codelibs.fess.util.FacetResponse.Field;
 import org.dbflute.optional.OptionalThing;
-import org.opensearch.script.Script;
+import org.codelibs.fesen.opensearch.script.Script;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
